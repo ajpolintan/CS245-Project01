@@ -12,7 +12,8 @@ public class project01 {
 		buildArray(actors);
 		
 		System.out.println("Loading...");
-		insertionSort(actors);
+		sort(actors);
+		//mergeSort(actors);
 		//Scanning Function
 		lookActor(actors);
 		
@@ -25,6 +26,10 @@ public class project01 {
 		boolean continueLoop = true;
 		boolean actorErrorLoop = true;
 		boolean found = false;
+		for(int i = 0; i < actors.size(); i++) {
+		
+				System.out.println(actors.get(i));
+		}
 		try {
 			while (movieLoop) {
 				continueLoop = true;
@@ -124,7 +129,7 @@ public class project01 {
 			int index = 0;
 			int commaCount = 0;
 			myReader.nextLine();
-			while (myReader.hasNextLine()) {
+			while (myReader.hasNextLine() ) {
 				boolean comma = true;
 				String data = myReader.nextLine();
 				String[] splitnewData = data.split(",");
@@ -220,59 +225,81 @@ public class project01 {
 		}
 	}
 	
-	public static void mergeSort(ArrayList<Actor> arr) {
-		if (arr.size() > 1) {
-			ArrayList<Actor> left = new ArrayList<Actor>();
-			ArrayList<Actor> right = new ArrayList<Actor>();
-			left = get_left(arr);
-			right = get_right(arr);
-			
-			mergeSort(left);
-			mergeSort(right);
-			merge(left,right,arr);
-		}
-	}
-	
-	public static ArrayList<Actor> get_left(ArrayList<Actor> arr) {
-		
-		int size = arr.size()/2;
-		for (int i = 0; i < size; i++) {
-			arr.add(arr.get(i));
-		}
-		return arr;
-	}
-	
 
-	public static ArrayList<Actor> get_right(ArrayList<Actor> arr) {
-		int size = arr.size() / 2 + 1;
-		for (int i = size; i < arr.size();i++) {
-			arr.add(arr.get(i));
-		}
-		return arr;
-	}
-	
-	public static void merge(ArrayList<Actor> bot,ArrayList<Actor> top,ArrayList<Actor> target) {
-		int li = 0;
-		int ri = 0;
-		int ti = 0;
-		while (li < bot.size() && ri < top.size()) {
-				if(bot.get(li).getActor().compareTo(top.get(ri).getActor()) > 0); {   
-					target.set(ti++,top.get(ri++));
-				}
-			    if (bot.get(li).getActor().compareTo(top.get(ri).getActor()) > 0) {
-					target.set(ti++,top.get(ri++));
+    public static <T extends Comparable<T>> void sort(ArrayList<Actor> actors) {
+        quickSort(actors, 0, actors.size() - 1);
+    }
+    
+	public static <T extends Comparable<T>> int partition(ArrayList<Actor> arr, int left, int right) {
+        Actor pivot = arr.get(left + right >> 1); // -> the element in the middle, not the pivot index
+        //When comparing generic data from the array, use the compareTo() function instead of equality operators
+        //compareTo return a boolean value, and boolean can also represent by -1, 0, 1
+        
+        while (left <= right) {
+            //1. keep checking left element in the array if is less than pivot, update the left boundary
+                if (arr.get(left).getActor().compareTo(pivot.getActor()) <= -1)  {
+                	left++;
+                }
+            //2. keep checking pivot if is less than the right element in the array, update the right boundary
+                else if (arr.get(right).getActor().compareTo(pivot.getActor()) >= 1) {
+                	right--;
+                }
+            //3. check left with right -> what should be the if-condition?
+            //then swap elements and update both boundary
+                else {
+                	swap(arr,left, right);
+                	left++;
+                	right--;
+                }
 
-			    }
+        }
+        return left;
+    }
+	   /**
+     * Recursively quick sorting the array by randomPartitioning*
+     *
+     * @param unsorted unsorted array
+     * @param left     left boundary
+     * @param right    right boundary
+     * @param <T>      data type T
+     */
+    public static <T extends Comparable<T>> void quickSort(ArrayList<Actor> unsorted, int left, int right) {
+        //TODO
+        // Complete the quicksort logic here
+        // pivot assignment should call the randomPartition helper function
+        // figure out the new left and right boundary based on the pivot
+    	
+    	if(left < right) {
+    		int p = randomPartition(unsorted,left,right);
+    		quickSort(unsorted, left, p - 1);
+    		quickSort(unsorted, p, right);
+    	}
 
-			   
-		}
-		 while(li < bot.size()) {
-		     target.set(ti++,bot.get(li++));
-		 }
-		 while(ri < top.size()) {
-		     target.set(ti++,top.get(ri++));
-		 }
-	}
+    }
+
+    /**
+     * random partitioning with Math.random() function to generate a random index *
+     * *
+     *
+     * @param unsorted unsorted array
+     * @param left     left pointer
+     * @param right    right pointer
+     * @param <T>      data type T
+     * @return perform sorting and return the index of pivot
+     */
+    public static <T extends Comparable<T>> int randomPartition(ArrayList<Actor> unsorted, int left, int right) {
+        int randomIndex = left + (int) (Math.random() * (right - left + 1));
+        swap(unsorted, randomIndex, right);
+        return partition(unsorted, left, right);
+    }
+
+	 public static <T> void swap(ArrayList<Actor> unsorted, int i, int j) {
+	        Actor temp = unsorted.get(i);
+	        unsorted.set(i, unsorted.get(j));
+	        unsorted.set(j, temp);
+
+	    }
+
 	public static int binarySearchInsert(ArrayList<Actor> arr, String target) {
 	       	int min = 0;
 	       	int max = arr.size() - 1;
