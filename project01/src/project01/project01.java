@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
 public class project01 {
-	//TESTING
+	//MAIN FILE
 	public static void main(String[] args)  {
 		System.out.println("Welcome to the Movie Wall!");
 		ArrayList<Actor> actors = new ArrayList<Actor>();
