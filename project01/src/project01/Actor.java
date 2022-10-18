@@ -1,23 +1,26 @@
 package project01;
 
 import java.util.ArrayList;
-
+//THE ACTOR CLASS
 public class Actor {
+
+	//Actor class is a class that consists of a actor String, character String, and movie String
 	String actor;
 	String character;
 	String movie;
-	ArrayList<String> movies;
+	//The Constructor
 	public Actor(String _actor, String _character,String _movie) {
 		actor = _actor;
 		character = _character;
 		movie = _movie;
-		ArrayList<String> movies;
 
 	}
-	
+	//Alternate Constructor which constructs a crew member if necessary 
 	public Actor(String _actor) {
 		actor = _actor;
 	}
+	
+	//How an actor is printed
 	public String toString() {
 		if(character != null) {
 			return actor + " as " + character + " in " + movie;
@@ -26,19 +29,9 @@ public class Actor {
 		return actor;
 	}
 	
+	//Getter method
 	public String getActor() {
 		return actor;
 	}
-	public ArrayList<String> getMovies(){
-		return movies;
-	}
-	public boolean addMovie(String movied) {
-		movies.add(movied);
-		return true;
-	}
-	public void printMovies() {
-		for(int i = 0; i < movies.size();i++) {
-			System.out.println(movies.get(i));
-		}
-	}
+
 }

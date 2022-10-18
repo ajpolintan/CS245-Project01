@@ -5,85 +5,95 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
 public class project01 {
-	//MAIN FILE
+	//Main Function
 	public static void main(String[] args)  {
 		System.out.println("Welcome to the Movie Wall!");
+		//Create ArrayList of actors
 		ArrayList<Actor> actors = new ArrayList<Actor>();
+		
+		//Reads the file and adds actors and characters
 		buildArray(actors);
 		
-		System.out.println("Loading...");
+		//Quick sort function  
 		sort(actors);
-		//mergeSort(actors);
-		//Scanning Function
+		
+		//Asks for User Input for a specific actor and lists the movies the actor is from
 		lookActor(actors);
 		
 	} //END OF MAIN
 	
+	 /**
+     * Summary: Asks for User Input for a specific actor and lists the movies the actor is from
+     * @param An ArrayList of actors
+     * @return Nothing because it is void
+     */
 	public static void lookActor(ArrayList<Actor> actors) {
 		
+		//Ask for User Input
 		Scanner sc = new Scanner(System.in);
+		//Conditionals for user input loops
 		boolean movieLoop = true;
 		boolean continueLoop = true;
 		boolean actorErrorLoop = true;
 		boolean found = false;
-		for(int i = 0; i < actors.size(); i++) {
 		
-				System.out.println(actors.get(i));
-		}
+		//Start Searching
 		try {
 			while (movieLoop) {
+				//Starting Conditionals
 				continueLoop = true;
 				found = false;
 				actorErrorLoop = true;
 				while (actorErrorLoop) {
+					//Ask for inputs
 					System.out.println("Enter an Actor: ");
 					try {
+						//Get input
 						String name = sc.nextLine().toUpperCase();
+						//A binary search will be performed to get an actor and will be compared to the user input
+						//If the user input is the same, then print the actor object
 						if (name.equals(actors.get(binarySearchInsert(actors,name)).getActor())) {
-							/*
-							for(int i = 0; i < actors.size();i++) {
-								if(actors.get(i).getActor().equals(name)) {
-									found = true;
-									System.out.println(actors.get(i));
-									actorErrorLoop = false;
-
-								}	
-							}
-							*/
-
+							//Conditional changes
 							actorErrorLoop = false;
 							found = true;
+							
+							//Get index of the name
 							int pos = actors.indexOf(actors.get(binarySearchInsert(actors,name)));
 							
-							//Reset to first duplicate
-							while(actors.get(pos).getActor().equals(actors.get(binarySearchInsert(actors,name)).getActor())) {
+							//Reset to first duplicate of Actors, which is the first movie for every actor 
+							while (actors.get(pos).getActor().equals(actors.get(binarySearchInsert(actors,name)).getActor())) {
 								pos--;
 							}
 							
 							//If it goes too far back
 							pos++;
 							
-							//Print duplicates
-							while(actors.get(pos).getActor().equals(actors.get(binarySearchInsert(actors,name)).getActor())) {
+							//Print every movie of the actor
+							while (actors.get(pos).getActor().equals(actors.get(binarySearchInsert(actors,name)).getActor())) {
 								System.out.println(actors.get(pos));
 								pos++;
 							}
 						} 
-					
-						//System.out.println(binarySearchInsert(actors,name));
+						//If a Actor is Not Found
 						if (found == false) {
-							System.out.println("No actor found") ;
+							//Recommend a similar actor similar to the name
+							System.out.println("No actor found");
 							System.out.println("Did you mean " + actors.get(binarySearchInsert(actors,name)).getActor());
+							//Ask for input 
+							//Y means print the movies of the recommended actor
+							//No means it will asks the User if they want to quit the program or not
 							String end = sc.nextLine().toUpperCase();
 							if(end.equals("Y") || end.equals("YES")) {
-								//BINARY SEARCH
+									//Uses the previous method to print out actor names
 									actorErrorLoop = false;
+									//Get index of actor
 									int pos = actors.indexOf(actors.get(binarySearchInsert(actors,name)));
+									//Print actor movies
 									while(actors.get(pos).getActor().equals(actors.get(binarySearchInsert(actors,name)).getActor())) {
 										System.out.println(actors.get(pos));
 										pos++;
 									}
-								
+							//Move to the next conditionals	
 							} else if(end.equals("N") || end.equals("NO")){
 								actorErrorLoop = false;
 							} else {
@@ -91,145 +101,118 @@ public class project01 {
 								actorErrorLoop = true;
 							}
 						}
+					  //Exception Catcher
 					} catch (IndexOutOfBoundsException e) {
 						System.out.println();
 					}
 				}
-			
+				//Asks if the user wants to enter another actor or exit the program
 				System.out.println("Press Y to continue or N to stop");
 				
 				
-				while(continueLoop) {
+				while (continueLoop) {
 					String end = sc.nextLine().toUpperCase();
+					//Y means to ask the user for another actor they want to search for
 					if(end.equals("Y") || end.equals("YES")) {
 						movieLoop = true;
 						continueLoop = false;
+					//N means to exit the program
 					} else if(end.equals("N") || end.equals("NO")){
 						movieLoop = false;
 						continueLoop = false;
 						System.out.println("Thank you for using the Movie Wall!");
+					//If the input is not Y or N
 					} else {
 						System.out.println("Invalid arguments");
 						continueLoop = true;
 					}
 				}
 			}
-		
+		//Error checker
 		} catch (IllegalArgumentException e) {
 			System.out.println("Error Occurance");
 			e.printStackTrace();
 		}
 	}
+	
+
+	 /**
+    * Summary: Reads the file and adds actors and characters
+    * @param An ArrayList of actors
+    * @return Nothing because it is void
+    */
 	public static void buildArray(ArrayList<Actor> arr) {
 		try {
-			
+			//Scanning the file
 			File file = new File("tmdb_5000_credits.csv");
 			Scanner myReader = new Scanner(file,"UTF-8");
-			int count = 0;
-			int index = 0;
-			int commaCount = 0;
+			//Skip Header Line
 			myReader.nextLine();
+			//Loop thru every line of CSV file
 			while (myReader.hasNextLine() ) {
-				boolean comma = true;
+				//Get Data for each line
 				String data = myReader.nextLine();
-				String[] splitnewData = data.split(",");
+				//Split Data By Commas
+				String[] splitNewData = data.split(",");
 
-				
-				for(int i = 0; i < splitnewData.length;i++) {
-					if(splitnewData[i].contains("character") || splitnewData[i].contains("name")) {
-					//	System.out.println(splitnewData[i]);
-						String adjust = splitnewData[i].replace("\"\"","");
+				//Loop thru the split data
+				for(int i = 0; i < splitNewData.length;i++) {
+					//Search for data in each line that equals character 
+					if(splitNewData[i].contains("character")) {
+						//Once a character or name is found, pass it to a String called adjust which will clean up the character String
+						String adjust = splitNewData[i].replace("\"\"","");
 						//Skip first space
 						adjust = adjust.substring(1,adjust.length());
-
-						//Remove } in crew
-						if(adjust.contains("}")) {
-							adjust = adjust.substring(0,adjust.length() - 1);
-						}
-						//Remove }] in crew
-						if(adjust.contains("}]")) {
-							adjust = adjust.substring(0,adjust.length() - 2);
-						}
 						
-						//If the character is the first string
-						//ADDS CHARACTER 
-						if (splitnewData[i].contains("character")) {
+						//Add Character
+						if (splitNewData[i].contains("character")) {
+							//Split the data to be passed into an actor object
 							String[] characters = adjust.split(": ");
-							//System.out.println(splitnewData[i + 4]);
-							//Name value
-							String name = splitnewData[i + 4].replace("\"\"","");
+							//Get the actor for the character which always comes after characters 4 times
+							String name = splitNewData[i + 4].replace("\"\"","");
 							//Remove extra space in beginning
 							name = name.substring(1,name.length());
-
+							//Split the data to be passed into an actor object
 							String[] names = name.split(": ");
-							//If the index is not greater
+							//This simply fixed errors I was getting
 							if(characters.length >= 2 && names.length >= 2) {
-								Actor actor = new Actor(names[1].toUpperCase(),characters[1],splitnewData[1]);
-							    //System.out.println(actor);
-								//If the actors array contains an actor that 
-								
-								
-								/*
-								 * If actor is not found, add the actor
-								 * else search for actor, add movie to actor								 * 
-								 */
-								
-							//	boolean isAdded = false;
-							//	for(int j = 0; i < actors.size();i++) {
-							//		if(actors.get(i).getActor().equals(name)) {
-							//			actors.get(i).getMovies().add(splitnewData[1]);
-							//			isAdded = true;
-							//		}
-							//	}
-								//If the actor is not added yet, add the actor 
-							//	if(isAdded == false) {
-									arr.add(actor);
-							//	}
+								//Add each actor into the ArrayList
+								Actor actor = new Actor(names[1].toUpperCase(),characters[1],splitNewData[1]);
+								arr.add(actor);
 							}
-						//If it is just a name, aka crew members
-						} else {
-							String[] characters = adjust.split(": ");
-							Actor actor = new Actor(characters[1]);
-
-						}
- 					
-						//System.out.println(adjust);
-
+						} 
 					}
 				}
-			
-				//System.out.println(castData);
-				//System.out.println(newData);
-				//for(int i = 0; i < splitnewData.length; i++) {
-				//	System.out.println(splitnewData[i]);
-				//}
-				
-				//System.out.println(splitnewData);
-				count++;
 			}
+			//Close the reader
 			myReader.close();
+		//Error Checker
 		} catch (FileNotFoundException e) {
 			System.out.println("Error Occurance");
 			e.printStackTrace();
 		}
 	}
-	public static void insertionSort(ArrayList<Actor> arr) {
-		for (int i = 1; i < arr.size(); i++) {
-			Actor temp = arr.get(i);
-			int j = i - 1;
-			while (j >= 0 && arr.get(j).getActor().compareTo(temp.getActor()) > 0) {
-				arr.set(j+1,arr.get(j));
-				j--;
-			}
-			arr.set(j+1, temp);
-		}
-	}
 	
-
+	
+	/**
+     * partition function for quick sort *
+     *
+     * @param ArrayList of Type Actor to be sorted
+     * @return nothing
+     */
     public static <T extends Comparable<T>> void sort(ArrayList<Actor> actors) {
         quickSort(actors, 0, actors.size() - 1);
     }
     
+    /**
+     * partition function for quick sort *
+     *
+     * @param arr   array to be sorted
+     * @param left  left boundary
+     * @param right right boundary
+     * @param ArrayList of type Actor
+     * @return pivot index
+     */
 	public static <T extends Comparable<T>> int partition(ArrayList<Actor> arr, int left, int right) {
         Actor pivot = arr.get(left + right >> 1); // -> the element in the middle, not the pivot index
         //When comparing generic data from the array, use the compareTo() function instead of equality operators
@@ -261,10 +244,9 @@ public class project01 {
      * @param unsorted unsorted array
      * @param left     left boundary
      * @param right    right boundary
-     * @param <T>      data type T
+     * @param ArrayList of type Actor
      */
     public static <T extends Comparable<T>> void quickSort(ArrayList<Actor> unsorted, int left, int right) {
-        //TODO
         // Complete the quicksort logic here
         // pivot assignment should call the randomPartition helper function
         // figure out the new left and right boundary based on the pivot
@@ -284,7 +266,7 @@ public class project01 {
      * @param unsorted unsorted array
      * @param left     left pointer
      * @param right    right pointer
-     * @param <T>      data type T
+     * @param ArrayList of type Actor
      * @return perform sorting and return the index of pivot
      */
     public static <T extends Comparable<T>> int randomPartition(ArrayList<Actor> unsorted, int left, int right) {
@@ -298,15 +280,18 @@ public class project01 {
 	        unsorted.set(i, unsorted.get(j));
 	        unsorted.set(j, temp);
 
-	    }
-
+	 }
+	 /**
+	    * Summary: Performs a binary search on the actor ArrayList
+	    * @param An ArrayList of actors and a String of the actor to search for 
+	    * @return The index of where the actor/target is found
+	 */
 	public static int binarySearchInsert(ArrayList<Actor> arr, String target) {
 	       	int min = 0;
 	       	int max = arr.size() - 1;
 	       	while (min <= max) {
 	       		int mid = (min + max) /2;
 	       		if(arr.get(mid).getActor().equals(target)) {
-	       			//return arr.get(mid).getActor();
 	       			return mid;
 	       		}
 	       		if(arr.get(mid).getActor().compareTo(target) <= 0) {
@@ -317,8 +302,7 @@ public class project01 {
 	       		}
 	       	}
 	       	return min;
-	      //   return arr.get(min).getActor();
-	         
+	     
 	      }
 
 
